@@ -44,7 +44,7 @@ If any of these assumptions are invalid, make the appropriate changes.
 This Nginx configuration comes in two parts:
 
 * `sites-available/somedomain.com.conf` - an Nginx virtual host configuration file tailored for Craft CMS; it will require some minor customization for your domain
-* `nginx-partials` - some Nginx configuration partials used by all of the virtual hosts, logically segregated.  These don't need to be changed, but can be selectively disabled by changing the suffix to `.off` (or anything other than `.conf`)
+* `snippets` - some Nginx configuration snippets used by all of the virtual hosts, logically segregated.  These don't need to be changed, but can be selectively disabled by not including them.
 
 ## Using Nginx-Craft
 
@@ -55,8 +55,8 @@ This Nginx configuration comes in two parts:
 
 ### Always
 
-1. Upload the entire `nginx-partials` folder to `/etc/nginx/`
-2. Rename the `somedomain.com.conf` file to `yourdomain.com` and upload to `/etc/nginx/sites-available`
+1. Dowload the entire `snippets` folder to `/etc/nginx/`
+2. Rename the `somedomain.com.conf` file to `yourdomain.com` and download to `/etc/nginx/sites-available`
 3. Do a search & replace in `yourdomain.com` to change `SOMEDOMAIN` -> `yourdomain`
 4. Change the `fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;` line to reflect whatever version of PHP you're running
 5. Restart nginx via `sudo nginx -s reload`

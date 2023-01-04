@@ -10,6 +10,7 @@
 * Update config to php8.2
 * Use brotli compression rather than gzip
 * Added `avif` to the `expires` header support
+* Renamed `nginx-partials` to `snippets`, and include each desired snippet, as opposed to glob include
 
 
 ## 1.0.34 - 2021.04.18
