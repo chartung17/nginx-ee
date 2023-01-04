@@ -9,6 +9,8 @@
 * Remove ssl params that let's encrypt handles
 * Update config to php8.2
 * Use brotli compression rather than gzip
+* Added `avif` to the `expires` header support
+
 
 ## 1.0.34 - 2021.04.18
 

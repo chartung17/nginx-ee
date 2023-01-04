@@ -8,7 +8,7 @@ An Nginx virtual host configuration for Craft CMS that implements a number of be
 
 The Nginx-Craft configuration handles:
 
-* Redirecting from HTTP to HTTPS (just uncomment appropriate lines in main file)
+* Redirecting from HTTP to HTTPS (just run certbot)
 * Canonical domain rewrites from SOMEDOMAIN.com to www.SOMEDOMAIN.com
 * 301 Redirect URLs with trailing /'s as per <https://webmasters.googleblog.com/2010/04/to-slash-or-not-to-slash.html>
 * Setting `PATH_INFO` properly via php-fpm -> PHP
