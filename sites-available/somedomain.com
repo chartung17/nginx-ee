@@ -14,28 +14,25 @@ map $http_user_agent $limit_bots {
 
 # Cannonical domain rewrite to add www
 server {
-    # Listen for both IPv4 & IPv6 requests on port 443 with http2 enabled
-    listen 80 http2;
-    listen [::]:80 http2;
-    server_name SOMEDOMAIN.com;
+    server_name SOMEDOMAIN;
     server_tokens off;
-    return 301 https://www.SOMEDOMAIN.com$request_uri;
+    return 301 http://www.SOMEDOMAIN$request_uri;
+
+    listen [::]:443 ssl http2;
+    listen 443 ssl http2;
+    ssl_certificate /etc/nginx/certs/SOMEDOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/SOMEDOMAIN/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 }
 
 # Primary virtual host server block
 server {
-    # Listen for both IPv4 & IPv6 requests on port 443 with http2 enabled
-    listen 80 http2;
-    listen [::]:80 http2;
-
     # General virtual host settings
-    server_name www.SOMEDOMAIN.com;
+    server_name www.SOMEDOMAIN;
     root "/var/www/SOMEDOMAIN/web";
     index index.html index.htm index.php;
     charset utf-8;
-
-    # Enable serving of static gzip files as per: http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html
-    gzip_static  on;
 
     # Enable server-side includes as per: http://nginx.org/en/docs/http/ngx_http_ssi_module.html
     ssi on;
@@ -70,7 +67,7 @@ server {
 
     # Access and error logging
     access_log off;
-    error_log  /var/log/nginx/SOMEDOMAIN.com-error.log error;
+    error_log  /var/log/nginx/error.log error;
     # If you want error logging to go to SYSLOG (for services like Papertrailapp.com), uncomment the following:
     #error_log syslog:server=unix:/dev/log,facility=local7,tag=nginx,severity=error;
 
@@ -106,7 +103,7 @@ server {
 
     # Craft-specific location handlers to ensure AdminCP requests route through index.php
     # If you change your `cpTrigger`, change it here as well
-    location ^~ /admin {
+    location ^~ /fosaas {
         try_files $uri $uri/ /index.php?$query_string;
     }
     location ^~ /cpresources {
@@ -125,7 +122,7 @@ server {
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
         fastcgi_param HTTP_PROXY "";
-        fastcgi_param HTTP_HOST SOMEDOMAIN.com;
+        fastcgi_param HTTP_HOST SOMEDOMAIN;
 
         # Don't allow browser caching of dynamically generated content
         add_header Last-Modified $date_gmt;
@@ -148,10 +145,10 @@ server {
     }
 
     # SSL/TLS configuration
-    # ssl_buffer_size 4k;
-    # ssl_stapling on;
-    # ssl_stapling_verify on;
-    # ssl_trusted_certificate /etc/nginx/ssl/lets-encrypt-x3-cross-signed.pem;
+    ssl_buffer_size 4k;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_trusted_certificate /etc/nginx/certs/cloudflare.pem;
 
     # Disable reading of Apache .htaccess files
     location ~ /\.ht {
@@ -160,4 +157,33 @@ server {
 
     # Misc settings
     sendfile off;
+
+    listen [::]:443 ssl http2 ipv6only=on;
+    listen 443 ssl http2;
+    ssl_certificate /etc/nginx/certs/SOMEDOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/SOMEDOMAIN/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+server {
+    if ($host = SOMEDOMAIN) {
+        return 301 https://$host$request_uri;
+    }
+
+    listen 80;
+    listen [::]:80;
+    server_name SOMEDOMAIN;
+    return 404;
+}
+
+server {
+    if ($host = www.SOMEDOMAIN) {
+        return 301 https://$host$request_uri;
+    }
+
+    listen 80;
+    listen [::]:80;
+    server_name www.SOMEDOMAIN;
+    return 404;
 }

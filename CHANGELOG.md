@@ -5,7 +5,6 @@
 ### Changed
 
 * Redirect naked to www, rather than vice-versa
-* Comment out irrelevant parts of config, including ssl (since CF will take care of that)
 * Remove ssl params that let's encrypt handles
 * Update config to php8.2
 * Use brotli compression rather than gzip

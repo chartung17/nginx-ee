@@ -8,7 +8,7 @@ An Nginx virtual host configuration for Craft CMS that implements a number of be
 
 The Nginx-Craft configuration handles:
 
-* Redirecting from HTTP to HTTPS (just run certbot)
+* Redirecting from HTTP to HTTPS
 * Canonical domain rewrites from SOMEDOMAIN.com to www.SOMEDOMAIN.com
 * 301 Redirect URLs with trailing /'s as per <https://webmasters.googleblog.com/2010/04/to-slash-or-not-to-slash.html>
 * Setting `PATH_INFO` properly via php-fpm -> PHP
@@ -16,7 +16,7 @@ The Nginx-Craft configuration handles:
 * "Far-future" Expires headers
 * Enable serving of static brotli files via `brotli_static`
 * Adding XSS and other security headers
-* Brolit compression
+* Brotli compression
 * Filename-based cache busting for static resources
 * IPv4 and IPv6 support
 * http2 support
@@ -29,9 +29,9 @@ The Nginx-Craft configuration handles:
 
 The following are assumptions made in this configuration:
 
-* The site is https (optional)
+* The site is https
 * The SSL certificate is from LetsEncrypt.com
-* The canonical domain is www.SOMEDOMAIN.com
+* The canonical domain is www.SOMEDOMAIN
 * Nginx is version 1.9.5 or later (and thus supports http2)
 * Paths are standard Ubuntu, change as needed
 * You're using php8.2 via php-fpm
@@ -50,20 +50,25 @@ This Nginx configuration comes in two parts:
 
 ### Configuring ssl
 
-1. Obtain an SSL certificate for your domain via [LetsEncrypt.com](https://letsencrypt.org/) (or via other certificate authorities).  LetsEncrypt.com is free, and it's automated.  You will need a basic server up and running that responds to port 80 to do this.
+1. Obtain
 
 
 ### Always
 
-1. Dowload the entire `snippets` folder to `/etc/nginx/`
-2. Rename the `somedomain.com.conf` file to `yourdomain.com` and download to `/etc/nginx/sites-available`
-3. Do a search & replace in `yourdomain.com` to change `SOMEDOMAIN` -> `yourdomain`
-4. Change the `fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;` line to reflect whatever version of PHP you're running
-5. Restart nginx via `sudo nginx -s reload`
-6. If configuring ssl on the server, download and run certbot to generate certificates after setting up DNS, then uncomment the ssl directives in `yourdomain.conf`
-
+1. Obtain an SSL certificate for your domain via Cloudflare > yourdomain > SSL/TLS > Origin Server > Create Certificate, and upload cert and private key to `/etc/nginx/certs/yourdomain/`
+2. [Install Certbot](https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal) (creates a `dhparams.pem` and manages some ssl defaults)
+3. Upload `cloudflare.pem` (the issuer certificate) to `/etc/nginx/certs/`. This is required for ssl stapling
+4. Upload the entire `snippets` folder to `/etc/nginx/snippets`
+5. Rename the `somedomain.com.conf` file to `yourdomain.com` and upload to `/etc/nginx/sites-available`
+6. Do a search & replace in `yourdomain.com` to change `SOMEDOMAIN` -> `yourdomain`
+7. Change the `fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;` line to reflect whatever version of PHP you're running
+8. Restart nginx via `sudo nginx -s reload`
 
 ## Local Development
+
+Normally we will use `ddev` for local development, which handles nginx configuration, but if you like bringing pain upon yourself, feel free to read on.
+
+--------
 
 While all of the configuration in the `somedomain.com.conf` will work fine in local development as well, some people might want a simpler setup for local development.
 
