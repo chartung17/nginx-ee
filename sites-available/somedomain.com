@@ -15,30 +15,34 @@ map $http_user_agent $limit_bots {
 # Cannonical domain rewrite to add www
 server {
     server_name SOMEDOMAIN;
-    server_tokens off;
-    return 301 http://www.SOMEDOMAIN$request_uri;
-
     listen [::]:443 ssl http2;
     listen 443 ssl http2;
-    ssl_certificate /etc/nginx/certs/SOMEDOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/nginx/certs/SOMEDOMAIN/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    if ($host = SOMEDOMAIN) {
+        return 301 https://www.$host$request_uri;
+    }
+    return 404;
+
+    server_tokens off;
+
+    include /etc/nginx/snippets/ssl.conf;
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
 }
 
 # Primary virtual host server block
 server {
-    # General virtual host settings
     server_name www.SOMEDOMAIN;
+    listen [::]:443 ssl http2 ipv6only=on;
+    listen 443 ssl http2;
+
+    if ($host != www.SOMEDOMAIN) {
+        return 404;
+    }
+
     root "/var/www/SOMEDOMAIN/web";
     index index.html index.htm index.php;
     charset utf-8;
-
-    # Enable server-side includes as per: http://nginx.org/en/docs/http/ngx_http_ssi_module.html
-    ssi on;
-
-    # Disable limits on the maximum allowed size of the client request body
-    client_max_body_size 0;
 
     # Ban certain bots from crawling the site
     if ($limit_bots = 1) {
@@ -55,6 +59,11 @@ server {
     merge_slashes off;
     rewrite (.*)//+(.*) $1/$2 permanent;
 
+    # Disable reading of Apache .htaccess files
+    location ~ /\.ht {
+        deny all;
+    }
+
     # For WordPress bots/users
     location ~ ^/(wp-login|wp-admin|wp-config|wp-content|wp-includes|xmlrpc) {
         return 301 https://wordpress.com/wp-login.php;
@@ -70,9 +79,6 @@ server {
     error_log  /var/log/nginx/error.log error;
     # If you want error logging to go to SYSLOG (for services like Papertrailapp.com), uncomment the following:
     #error_log syslog:server=unix:/dev/log,facility=local7,tag=nginx,severity=error;
-
-    # Don't send the nginx version number in error pages and Server header
-    server_tokens off;
 
     # Load configuration files from snippets
     include /etc/nginx/snippets/compression.conf;
@@ -103,7 +109,7 @@ server {
 
     # Craft-specific location handlers to ensure AdminCP requests route through index.php
     # If you change your `cpTrigger`, change it here as well
-    location ^~ /fosaas {
+    location ^~ /admin {
         try_files $uri $uri/ /index.php?$query_string;
     }
     location ^~ /cpresources {
@@ -130,6 +136,7 @@ server {
         if_modified_since off;
         expires off;
         etag off;
+
         include /etc/nginx/snippets/security.conf;
 
         # Use Dotenvy to generate the .env variables as per: https://github.com/nystudio107/dotenvy
@@ -144,46 +151,28 @@ server {
         fastcgi_read_timeout 300;
     }
 
-    # SSL/TLS configuration
-    ssl_buffer_size 4k;
-    ssl_stapling on;
-    ssl_stapling_verify on;
-    ssl_trusted_certificate /etc/nginx/certs/cloudflare.pem;
+    # Enable server-side includes as per: http://nginx.org/en/docs/http/ngx_http_ssi_module.html
+    ssi on;
+    # Disable limits on the maximum allowed size of the client request body
+    client_max_body_size 0;
+    # Don't send the nginx version number in error pages and Server header\
+    server_tokens off;
 
-    # Disable reading of Apache .htaccess files
-    location ~ /\.ht {
-        deny all;
-    }
-
-    # Misc settings
-    sendfile off;
-
-    listen [::]:443 ssl http2 ipv6only=on;
-    listen 443 ssl http2;
-    ssl_certificate /etc/nginx/certs/SOMEDOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/nginx/certs/SOMEDOMAIN/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    include /etc/nginx/snippets/ssl.conf;
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
 }
 
 server {
-    if ($host = SOMEDOMAIN) {
+    listen 80;
+    listen [::]:80;
+    server_name SOMEDOMAIN www.SOMEDOMAIN;
+
+    if ($host ~ (www\.)?SOMEDOMAIN) {
         return 301 https://$host$request_uri;
     }
 
-    listen 80;
-    listen [::]:80;
-    server_name SOMEDOMAIN;
     return 404;
-}
 
-server {
-    if ($host = www.SOMEDOMAIN) {
-        return 301 https://$host$request_uri;
-    }
-
-    listen 80;
-    listen [::]:80;
-    server_name www.SOMEDOMAIN;
-    return 404;
+    server_tokens off;
 }

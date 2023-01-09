@@ -48,21 +48,40 @@ This Nginx configuration comes in two parts:
 
 ## Using Nginx-Craft
 
-### Configuring ssl
+> **Warning**
+> For any sections involving HSTS, be sure that your domain _and all its subdomains_ are and will be accessible via https. If you are not sure or don't understand this feature, do not proceed!
 
-1. Obtain
+### On Cloudflare
 
+1. Configure SSL mode
+    * Go to Cloudflare > yourdomain > SSL/TLS
+    * Select "Full (strict)"
+1. Obtain an SSL certificate for your domain
+    * Go to Cloudflare > yourdomain > SSL/TLS > Origin Server
+    * If site host certificate is already created, check 1Pass for cert and private key
+    * Otherwise, "Create Certificate", select "ECC" as the key type, "Create", then save cert and private key in 1Pass
+1. Configure SSL settings
+    * Go to Cloudflare > yourdomain > SSL/TLS > Edge Certificates
+    * Toggle "Always Use HTTPS" on
+    * Enable HSTS - toggle all options on and set `max-age` to 1 year
+    * Set "Minimum TLS Version" to 1.2
+    * Toggle "Opportunistic Encryption" on
+    * Toggle "TLS 1.3" on
+    * Toggle "Automatic HTTPS Rewrites" on
 
-### Always
+### On Server
 
-1. Obtain an SSL certificate for your domain via Cloudflare > yourdomain > SSL/TLS > Origin Server > Create Certificate, and upload cert and private key to `/etc/nginx/certs/yourdomain/`
-2. [Install Certbot](https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal) (creates a `dhparams.pem` and manages some ssl defaults)
-3. Upload `cloudflare.pem` (the issuer certificate) to `/etc/nginx/certs/`. This is required for ssl stapling
-4. Upload the entire `snippets` folder to `/etc/nginx/snippets`
-5. Rename the `somedomain.com.conf` file to `yourdomain.com` and upload to `/etc/nginx/sites-available`
-6. Do a search & replace in `yourdomain.com` to change `SOMEDOMAIN` -> `yourdomain`
-7. Change the `fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;` line to reflect whatever version of PHP you're running
-8. Restart nginx via `sudo nginx -s reload`
+1. Upload fullchain certificate and private key to `/etc/nginx/ssl/` as `fullchain.pem` and `privkey.pem`, respectively
+1. Upload `cloudflare.pem` (the issuer certificate) and `dhparams.pem` to `/etc/nginx/ssl/`; these are required for ssl stapling and key-exchange protocols, respectively
+1. Upload the entire `snippets` folder to `/etc/nginx/snippets`
+1. Rename the `somedomain.com` file to `yourdomain.com` and upload to `/etc/nginx/sites-available`
+1. Do a search & replace in `yourdomain.com` to change `SOMEDOMAIN` -> `yourdomain`
+1. Change the `fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;` line to reflect whatever version of PHP you're running
+1. Restart nginx via `sudo nginx -s reload`
+
+### Additional
+
+* Go to <https://hstspreload.org/> and submit domain name for preloading
 
 ## Local Development
 
@@ -75,5 +94,3 @@ While all of the configuration in the `somedomain.com.conf` will work fine in lo
 There is a `basic_localdev.com.conf` that you can use for a basic Nginx configuration that will work with Craft without any of the bells, whistles, or optimizations found in the `somedomain.com.conf`.
 
 While this is suitable for getting up and running quickly for local development, do not use it in production. There are a number of performance optimizations missing from it.
-
-Brought to you by [nystudio107](https://nystudio107.com/)
