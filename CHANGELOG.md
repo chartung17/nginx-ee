@@ -169,7 +169,7 @@
 
 ### Added
 
-* Added a `basic_localdev.com.conf` for people who just want a basic Nginx configuration for Craft local dev
+* Added a `basic_localdev.com` for people who just want a basic Nginx configuration for Craft local dev
 
 ## 1.0.10 - 2017.09.12
 

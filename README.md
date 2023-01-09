@@ -9,7 +9,7 @@ An Nginx virtual host configuration for Craft CMS that implements a number of be
 The Nginx-Craft configuration handles:
 
 * Redirecting from HTTP to HTTPS
-* Canonical domain rewrites from SOMEDOMAIN.com to www.SOMEDOMAIN.com
+* Canonical domain rewrites from SOMEDOMAIN to www.SOMEDOMAIN
 * 301 Redirect URLs with trailing /'s as per <https://webmasters.googleblog.com/2010/04/to-slash-or-not-to-slash.html>
 * Setting `PATH_INFO` properly via php-fpm -> PHP
 * Setting `HTTP_HOST` to mitigate [HTTP_HOST Security Issues](https://expressionengine.com/blog/http-host-and-server-name-security-issues)
@@ -29,11 +29,11 @@ The Nginx-Craft configuration handles:
 
 The following are assumptions made in this configuration:
 
-* The site is https
-* The SSL certificate is from LetsEncrypt.com
+* The site and its subdomains use https
+* The site is managed at cloudflare
 * The canonical domain is www.SOMEDOMAIN
-* Nginx is version 1.9.5 or later (and thus supports http2)
-* Paths are standard Ubuntu, change as needed
+* Nginx is version 1.22 or later, from the ubuntu package maintained by ondrej (or otherwise has brotli support compiled in)
+* Paths are standard Ubuntu
 * You're using php8.2 via php-fpm
 * You have `'omitScriptNameInUrls' => true,` in your `craft/general.php`
 
@@ -43,7 +43,7 @@ If any of these assumptions are invalid, make the appropriate changes.
 
 This Nginx configuration comes in two parts:
 
-* `sites-available/somedomain.com.conf` - an Nginx virtual host configuration file tailored for Craft CMS; it will require some minor customization for your domain
+* `sites-available/somedomain.com` - an Nginx virtual host configuration file tailored for Craft CMS; it will require some minor customization for your domain
 * `snippets` - some Nginx configuration snippets used by all of the virtual hosts, logically segregated.  These don't need to be changed, but can be selectively disabled by not including them.
 
 ## Using Nginx-Craft
@@ -89,8 +89,8 @@ Normally we will use `ddev` for local development, which handles nginx configura
 
 --------
 
-While all of the configuration in the `somedomain.com.conf` will work fine in local development as well, some people might want a simpler setup for local development.
+While all of the configuration in the `somedomain.com` will work fine in local development as well, some people might want a simpler setup for local development.
 
-There is a `basic_localdev.com.conf` that you can use for a basic Nginx configuration that will work with Craft without any of the bells, whistles, or optimizations found in the `somedomain.com.conf`.
+There is a `basic_localdev.com` that you can use for a basic Nginx configuration that will work with Craft without any of the bells, whistles, or optimizations found in the `somedomain.com`.
 
 While this is suitable for getting up and running quickly for local development, do not use it in production. There are a number of performance optimizations missing from it.

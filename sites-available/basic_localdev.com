@@ -8,7 +8,7 @@
 
 # This is a BASIC Nginx config for Craft, suitable for use in for local development
 # DO NOT use this config in production, it is not performant. Instead, use the
-# somedomain.com.conf config
+# somedomain.com config
 server {
     # Listen for both IPv4 & IPv6 on port 80
     listen 80;
