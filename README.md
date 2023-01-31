@@ -68,6 +68,7 @@ This Nginx configuration comes in two parts:
     * Toggle "Opportunistic Encryption" on
     * Toggle "TLS 1.3" on
     * Toggle "Automatic HTTPS Rewrites" on
+1. Point DNS to your server
 
 ### On Server
 
@@ -77,7 +78,9 @@ This Nginx configuration comes in two parts:
 1. Rename the `somedomain.com` file to `yourdomain.com` and upload to `/etc/nginx/sites-available`
 1. Do a search & replace in `yourdomain.com` to change `SOMEDOMAIN` -> `yourdomain`
 1. Change the `fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;` line to reflect whatever version of PHP you're running
-1. Restart nginx via `sudo nginx -s reload`
+1. Create a symlink to enable your site `ln -s /etc/nginx/sites-available/SOMEDOMAIN /etc/nginx/sites-enabled/SOMEDOMAIN`
+1. Test your configuration `nginx -t`
+1. Restart nginx via `nginx -s reload`
 
 ### Additional
 
