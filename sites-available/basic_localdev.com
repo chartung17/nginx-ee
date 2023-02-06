@@ -1,12 +1,12 @@
-# Nginx-Craft virtual host configuration file
-# @author    nystudio107
+# Nginx-EE virtual host configuration file
+# @author    nystudio107, Christopher Hartung
 # @copyright Copyright (c) 2016 nystudio107
 # @link      https://nystudio107.com/
 # @package   nginx-craft
 # @since     1.0.11
 # @license   MIT
 
-# This is a BASIC Nginx config for Craft, suitable for use in for local development
+# This is a BASIC Nginx config for ExpressionEngine, suitable for use in for local development
 # DO NOT use this config in production, it is not performant. Instead, use the
 # somedomain.com config
 server {
@@ -38,7 +38,7 @@ server {
 
     # Root directory location handler
     location / {
-        try_files $uri/index.html $uri $uri/ /index.php?$query_string;
+        try_files $uri /index.php$is_args$args;
     }
 
     # php-fpm configuration
