@@ -1,5 +1,5 @@
 # Nginx-Craft virtual host configuration file
-# @author    nystudio107, Augustine Calvino
+# @author    nystudio107, Augustine Calvino, Christopher Hartung
 # @copyright Copyright (c) 2016 nystudio107
 # @link      https://nystudio107.com/
 # @package   nginx-craft
@@ -86,34 +86,7 @@ server {
 
     # Root directory location handler
     location / {
-        try_files $uri/index.html $uri $uri/ /index.php?$query_string;
-    }
-
-    # Localized sites, hat tip to Johannes -- https://gist.github.com/johanneslamers/f6d2bc0d7435dca130fc
-
-    # If you are creating a localized site as per: https://craftcms.com/docs/localization-guide
-    # the directives here will help you handle the locale redirection so that requests will
-    # be routed through the appropriate index.php wherein you set the `CRAFT_LOCALE`
-
-    # Enable this by un-commenting it, and changing the language codes as appropriate
-    # Add a new location @XXrewrites and location /XX/ block for each language that
-    # you need to support
-
-    #location @enrewrites {
-    #    rewrite ^/en/(.*)$ /en/index.php?$query_string? last;
-    #}
-    #
-    #location /en/ {
-    #    try_files $uri $uri/ @enrewrites;
-    #}
-
-    # Craft-specific location handlers to ensure AdminCP requests route through index.php
-    # If you change your `cpTrigger`, change it here as well
-    location ^~ /admin {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-    location ^~ /cpresources {
-        try_files $uri $uri/ /index.php?$query_string;
+        try_files $uri /index.php$is_args$args;
     }
 
     # php-fpm configuration
