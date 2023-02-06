@@ -1,4 +1,4 @@
-# Nginx-Craft virtual host configuration file
+# Nginx-EE virtual host configuration file
 # @author    nystudio107, Augustine Calvino, Christopher Hartung
 # @copyright Copyright (c) 2016 nystudio107
 # @link      https://nystudio107.com/
