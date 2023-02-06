@@ -1,12 +1,12 @@
-# nginx-craft
+# nginx-ee
 
-An Nginx virtual host configuration for Craft CMS that implements a number of best-practices.
+An Nginx virtual host configuration for ExpressionEngine that implements a number of best-practices.
 
 ## Overview
 
 ### What it handles
 
-The Nginx-Craft configuration handles:
+The Nginx-EE configuration handles:
 
 * Redirecting from HTTP to HTTPS
 * Canonical domain rewrites from SOMEDOMAIN to www.SOMEDOMAIN
@@ -43,10 +43,10 @@ If any of these assumptions are invalid, make the appropriate changes.
 
 This Nginx configuration comes in two parts:
 
-* `sites-available/somedomain.com` - an Nginx virtual host configuration file tailored for Craft CMS; it will require some minor customization for your domain
+* `sites-available/somedomain.com` - an Nginx virtual host configuration file tailored for ExpressionEngine; it will require some minor customization for your domain
 * `snippets` - some Nginx configuration snippets used by all of the virtual hosts, logically segregated.  These don't need to be changed, but can be selectively disabled by not including them.
 
-## Using Nginx-Craft
+## Using Nginx-EE
 
 > **Warning**
 > For any sections involving HSTS, be sure that your domain _and all its subdomains_ are and will be accessible via https. If you are not sure or don't understand this feature, do not proceed!
@@ -94,6 +94,6 @@ Normally we will use `ddev` for local development, which handles nginx configura
 
 While all of the configuration in the `somedomain.com` will work fine in local development as well, some people might want a simpler setup for local development.
 
-There is a `basic_localdev.com` that you can use for a basic Nginx configuration that will work with Craft without any of the bells, whistles, or optimizations found in the `somedomain.com`.
+There is a `basic_localdev.com` that you can use for a basic Nginx configuration that will work with ExpressionEngine without any of the bells, whistles, or optimizations found in the `somedomain.com`.
 
 While this is suitable for getting up and running quickly for local development, do not use it in production. There are a number of performance optimizations missing from it.
