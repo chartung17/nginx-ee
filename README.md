@@ -86,6 +86,10 @@ This Nginx configuration comes in two parts:
 
 * Go to <https://hstspreload.org/> and submit domain name for preloading
 
+## Staging
+
+The `somedomain_staging.com` config is intended for use on staging sites that do not have `www` URLs. It is identical to `somedomain.com` except for the `www` redirects.
+
 ## Local Development
 
 Normally we will use `ddev` for local development, which handles nginx configuration, but if you like bringing pain upon yourself, feel free to read on.
