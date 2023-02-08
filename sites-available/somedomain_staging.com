@@ -15,7 +15,7 @@ map $http_user_agent $limit_bots {
 # Primary virtual host server block
 server {
     server_name SOMEDOMAIN;
-    listen [::]:443 ssl http2 ipv6only=on;
+    listen [::]:443 ssl http2;
     listen 443 ssl http2;
 
     if ($host != SOMEDOMAIN) {
