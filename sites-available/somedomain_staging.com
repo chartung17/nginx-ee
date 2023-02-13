@@ -22,7 +22,7 @@ server {
         return 404;
     }
 
-    root "/var/www/SOMEDOMAIN/web";
+    root "/var/www/SOMEDOMAIN";
     index index.html index.htm index.php;
     charset utf-8;
 
